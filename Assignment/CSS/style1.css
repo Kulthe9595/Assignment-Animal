@@ -1,0 +1,125 @@
+ #main
+  {
+    margin-top: 50px;
+
+  
+  }
+  .counter
+  {
+    float: right;
+    margin-left:50px;
+   
+  }
+
+
+
+
+.content-table{
+    border-collapse: collapse;
+    margin: 00px ;
+    font-size: 0.9em;
+    min-width: 400px;
+    /* border-radius: 5px 5px 0 0 ; */
+    border-radius: 5px;
+    overflow: hidden;
+    margin-left: 250px;
+    margin-top: 50px;
+    /* width: 900px; */
+    width: 1000px;
+    box-shadow: 0 0 30px rgb(0, 0, 0);
+
+}
+.content-table thead tr{
+    /* background-color: #000000; */
+    /* color: white; */
+    color: white;
+    /* font-family:sans-serif; */
+    font-family: "Times New Roman", Times, serif;
+
+    /* background-color: #393e46; */
+    background-color: #00303f;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    justify-content: space-between;
+    text-align: left;
+    font-weight: bold;
+
+}
+.content-table th,
+.content-table td{
+    padding: 12px 15px;
+    
+}
+.content-table tbody tr{
+    /* border-bottom: 2px solid #dddddd; */
+    
+    /* border-bottom: 2px solid #5D675B; */
+    border-bottom: 2px solid #00303f3a;
+    
+}
+.content-table tbody tr:nth-of-type(even){
+    /* background-color: #f3f3f38c; */
+
+    /* background-color: #5d675b30; */
+    background-color: #00303f2b;
+}
+.content-table tbody tr:last-of-type{
+    border-bottom: 2px solid #000000 ;
+}
+
+
+
+
+
+.btn
+{
+  border: 2px solid black;
+  background: white;;
+  color: black;
+  padding:10px 18px;
+  font-size:12px;
+  cursor: pointer;
+}
+.success
+{
+  border-color: #04aa6d;
+  color: green;
+}
+
+.success:hover
+{
+  border-color: #04aa6d;
+  color: white;
+
+}
+.btn1
+{
+  display:inline-block;
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #00a8ff;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  transition: .3s linear;
+}
+label
+{
+    margin-left:20px;
+}
+input,select
+{
+   width: 10%;
+  padding: 6px 10px;
+  /*margin: 0 25px 0 25px;*/
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
