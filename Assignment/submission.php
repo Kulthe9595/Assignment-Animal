@@ -1,158 +1,214 @@
 <?php
 include('connection.php');
-error_reporting(0);
+// error_reporting(0);
 
-$err_name = $err_category= $err_decription = $err_img = $errlife_exp =$err_captcha =  '';
 
 if(isset($_POST['Submit'])){
 
-   
-    $animalName = $_POST['animalName'];
-    $description = $_POST['Description'];
+    $animal_name = $_POST['animal-name'];
+    $animal_description = $_POST['animal-description'];
     $category = $_POST['category'];
-    $lifeExpenctancy = $_POST['LifeExpenctancy'];
+    $Life_expenctancy = $_POST['Life_expenctancy'];
 
     $captchaResult = $_POST["captchaResult"];
 	$firstNumber = $_POST["firstNumber"];
 	$secondNumber = $_POST["secondNumber"];
-
-
-    $checkTotal = $firstNumber + $secondNumber;
     
-    // upload img 
+    // image upload 
+        $fname = $_FILES['file']['name'];
+        $target_dir = "upload/";
+        $target_file = $target_dir . basename($_FILES["file"]["name"]);
 
-     // Get file info 
-     $fileName = basename($_FILES["image"]["name"]); 
-     $fileType = pathinfo($fileName, PATHINFO_EXTENSION); 
+      // Select file type
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+    // Valid file extensions
+        $extensions_arr = array("jpg","jpeg","png","gif");
+  
+   
+   
+
+    if(in_array($imageFileType,$extensions_arr)){
+        
+        // Upload file
+        if(move_uploaded_file($_FILES['file']['tmp_name'],$target_dir.$fname)){
     
-     // Allow certain file formats 
-     $allowTypes = array('jpg','png','jpeg','gif'); 
+            $sql = "INSERT INTO `animalcollection`(`name`, `category`, `animalimg`, `decription`, `life_expenctancy`,`uploaded`) VALUES ('$animal_name','$category','$fname','$animal_description','$Life_expenctancy',NOW())";
         
-
-        if(empty(trim($animalName))){
-            $err_name = "Enter Animal Name!";
-        }
-           
-        if(empty(trim($description))){
-            $err_decription = "Enter description!";
-        } 
-        if(empty($category)){
-             $err_category = "Please Select Category";
-
-         }  
-        if(empty($lifeExpenctancy)){
-            $errlife_exp = "Please Select Life Expenctancy";
-        }         
-        if(empty($_FILES["image"]["name"])){
-            $err_img ="Please Select Image";
-        }
-
-        if ($captchaResult != $checkTotal) {
-            $err_captcha = "You Enter Wrong Captcha code!";
-        }
-         
-
-
-            
-        if(!empty($animalName) && !empty($description) && !empty($category) && !empty($lifeExpenctancy) && !empty($captchaResult)&& in_array($fileType, $allowTypes)){ 
-
-                $image = $_FILES['image']['tmp_name']; 
-                $imgContent = addslashes(file_get_contents($image)); 
-        
-               $sql = "INSERT INTO `animalcollection`(`name`, `category`, `animalimg`, `decription`, `life_expenctancy`,`uploded`) VALUES ('$animalName','$category','$imgContent','$description','$lifeExpenctancy',NOW())";
-        
-                $result = mysqli_query($conn,$sql);
-            
-                if($result){
-                    header("location:animals.php");
-                }
+            $result = mysqli_query($conn,$sql);
+               
+            if($result){
+                header("location:animals.php");
             }
+        }
+    }
+        
+   
 }
 
 
 ?>
 
-<html>  
-    <head>  
-        <title>Animal</title>  
-  <link rel="stylesheet" type="text/css" href="CSS/style.css">
-    </head>  
-    <body>  
- <div class="container" style="width: 600px">
-  
 
-   <h3 align="center"> Add New Animal</a></h3><br />
 
-  
-      <h3>Enter details</h3>
-  
-     
-     
-    <form method="POST" enctype="multipart/form-data">
 
-      
-       <label>Name of Animal <span class="text-danger">*</span></label>
-       <input type="text" name="animalName"  />
-       <span id="name_Error" class="text-danger"> <?php if(!empty($err_name)){  echo $err_name;}?></span><br>
-     
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Animal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- MARKS: Heading -->
+    <header class='speaker-form-header'>
+      <h1>Add New Animal </h1>
+    </header>
+    <!-- ---------------- -->
 
-      
-        <label for="Select_Category">Select Category <span class="text-danger">*</span></label><br><br>
-            <input type="radio"  name="category" value="Herbivores">
-            <label>Herbivores</label>
+    <!-- MARKS: Creating form -->
 
-            <input type="radio"  name="category" value="Omivores">
-            <label>Omivores</label>
+    <form method='POST' class='speaker-form' onsubmit="return validation()" enctype="multipart/form-data">
+        <!-- Animal Name input filed -->
+        <div class='form-row'>
+            <label for='animal-name'>Animal Name</label>
+            <input id='animal-name' id='animal-name' name='animal-name' type='text' />    
+            <span id="animal_name_err" class="text-danger"> </span>
+        </div>
+
+        <!-- select category redio button -->
+        <fieldset class='legacy-form-row'>
+            <legend>Category</legend>
+                <input type="radio"  id="category" name="category" value="Herbivores">
+                <label  class='radio-label'>Herbivores</label>
+
+                <input type="radio"  id="category" name="category" value="Omivores">
+                <label  class='radio-label'>Omivores</label>
         
-            <input type="radio" name="category" value="Carnivores">
-            <label>Carnivores</label>
-        
-            <span id="error_category" class="text-danger"> <?php if(!empty($err_category)){  echo $err_category;}?></span><br><br>
-       
+                <input type="radio" id="category" name="category" value="Carnivores">
+                <label  class='radio-label'>Carnivores</label>
 
+                <span id="category_err" class="text-danger"></span>
+        </fieldset>
 
+        <!-- upload image  -->
+        <div class='form-row'>
+            <label for='animal-image'>Upload Image</label> 
+            <input name='file' type='file' id="file"/>
+        </div>
+        <span id="img_err" class="text-danger"></span>
 
-       
-            <label for="image">Upload Image<span class="text-danger">*</span></label><br>
-            <input type="file"  name="image">
-            <span id="img_error" class="text-danger"> <?php if(!empty($err_img)){  echo $err_img;}?></span><br>
-  <label>Description</label><br>
-        <textarea  name="Description" rows="3"></textarea>
-        <span id="error_desc" class="text-danger"> <?php if(!empty($err_decription)){  echo $err_decription;}?></span><br>
-       
+        </div>
 
-       
-        <label>Life Expectancy <span class="text-danger">*</span></label><br>
-        <select  name="LifeExpenctancy">
-            <option> -- Select --</option>
-            <option value="0-1 Years"> 0-1 Years</option>
-            <option value="5-10 Years">5-10 Years</option>
-            <option value="10+ Years">10+ Years</option>
-        </select>
-        <span id="error_lifeexp" class="text-danger"> <?php if(!empty($errlife_exp)){  echo $errlife_exp;}?></span><br>
-       
+        <div class='form-row'>
+            <label>Life Expectancy</label>
+                <select  id="Life_expenctancy" name="Life_expenctancy">
+                    <option value="0"> -- Select --</option>
+                    <option value="0-1 Years"> 0-1 Years</option>
+                    <option value="5-10 Years">5-10 Years</option>
+                    <option value="10 + Years">10 + Years</option>
+                </select>         
+        </div>
+        <span id="Life_expenctancy_err" class="text-danger"></span>
+    
+        <div class='form-row'>
+                <label for='animal-description'>Description</label>
+                <textarea id='animal-description' name='animal-description'></textarea>
+        </div>
 
         <!-- 6)Captcha -->
-    <?php
-    // captcha code
-        $min_number = 1;
-        $max_number = 15;
+        <div class='form-row'>
+            <?php
+            // captcha code
+                $min_number = 1;
+                $max_number = 15;
 
-        $random_number1 = mt_rand($min_number, $max_number);
-        $random_number2 = mt_rand($min_number, $max_number);
-        echo $random_number1 . ' + ' . $random_number2 . ' = <br>';
-    ?>  
-        <input type="text"  name="captchaResult"><br>
-        <input name="firstNumber" type="hidden" value="<?php echo $random_number1; ?>" />
-        <input name="secondNumber" type="hidden" value="<?php echo $random_number2; ?>" /><br>
-        <?php if(!empty($err_captcha)){?> <p class="text-danger"><?php echo $err_captcha;}?></p>
- 
+                $random_number1 = mt_rand($min_number, $max_number);
+                $random_number2 = mt_rand($min_number, $max_number);
+                ?><label><?php echo $random_number1 . ' + ' . $random_number2 . ' = ';?> </label> 
+            <input type="text" id="captchaResult" name="captchaResult" value="">
+            <input id="firstNumber" name="firstNumber" type="hidden" value="<?php echo $random_number1; ?>" />
+            <input id="secondNumber" name="secondNumber" type="hidden" value="<?php echo $random_number2; ?>" />
+        </div>
+        <span id="captcha_err" class="text-danger"></span>
 
-      
-       <input type="submit" name="Submit"  />
- </div>
-     </form>
-     
-   
-    </body>  
+
+        <div class='form-row'>
+            <input type="submit" name="Submit">
+        </div>
+
+    </form>
+    <!-- -------------------- -->
+
+</body>
+<script type="text/javascript">
+
+		function validation(){
+
+			var animal_name = document.getElementById('animal-name').value;
+            var Life_expenctancy = document.getElementById('Life_expenctancy').value;
+            var animal_category = document.querySelector('input[name="category"]:checked');
+            var fileInput =  document.getElementById('file').value;
+
+            var captchaResult = document.getElementById('captchaResult').value;
+            var firstNumber = document.getElementById('firstNumber').value;
+            var secondNumber = document.getElementById('secondNumber').value;   
+
+            var firstNumber1 = + firstNumber
+            var secondNumber1 = + secondNumber
+            var result = + captchaResult
+            var total = firstNumber1 + secondNumber1
+    
+                document.getElementById('animal-name').innerHTML ="";
+                document.getElementById('category_err').innerHTML ="";
+                document.getElementById('Life_expenctancy_err').innerHTML ="";
+                document.getElementById('img_err').innerHTML ="";
+                document.getElementById('captcha_err').innerHTML ="";
+
+
+            // Name error
+			if(animal_name == ""){
+				document.getElementById('animal_name_err').innerHTML =" ** Please fill the Animal Name field";
+				return false;
+			}
+			if((animal_name.length <= 2) || (animal_name.length > 20)) {
+				document.getElementById('animal_name_err').innerHTML =" ** Animal Name lenght must be between 2 and 20";
+				return false;	
+			}
+			if(!isNaN(animal_name)){
+				document.getElementById('animal_name_err').innerHTML =" ** only characters are allowed";
+				return false;
+			}
+
+
+             // category error 
+             if(!animal_category){
+				document.getElementById('category_err').innerHTML =" ** Please One Of above Category ";
+				return false;
+            }
+
+             // image error
+             if(fileInput == ""){
+				document.getElementById('img_err').innerHTML =" ** Please upload Correct file ";
+				return false;
+			}
+            
+
+            // Life_expenctancy error
+            if(Life_expenctancy == "0"){
+				document.getElementById('Life_expenctancy_err').innerHTML =" ** Please One Of above Life expenctancy";
+				return false;
+			}
+
+            // Captcha  error
+            if(result != total){
+				document.getElementById('captcha_err').innerHTML =" ** Please enter correct captcha";
+				return false;
+			}
+            
+        }
+
+	</script>
 </html>
